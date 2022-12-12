@@ -1,0 +1,31 @@
+{
+  "name": "advent",
+  "version": "1.0.0",
+  "description": "Advent of Code",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "advent2022": "ts-node advent2022/${npm_config_code} -f advent2022/data/${npm_config_data}",
+    "advent2021": "ts-node advent2021/${npm_config_code} -f advent2021/data/${npm_config_data}",
+    "advent2020": "ts-node advent2020/${npm_config_code} -f advent2020/data/${npm_config_data}",
+    "advent2019": "ts-node advent2019/${npm_config_code} -f advent2019/data/${npm_config_data}",
+    "advent2018": "ts-node advent2018/${npm_config_code} -f advent2018/data/${npm_config_data}",
+    "advent2017": "ts-node advent2017/${npm_config_code} -f advent2017/data/${npm_config_data}",
+    "advent2016": "ts-node advent2016/${npm_config_code} -f advent2016/data/${npm_config_data}",
+    "advent2015": "ts-node advent2015/${npm_config_code} -f advent2015/data/${npm_config_data}",
+    "getInput": "mkdir -p advent${npm_config_year}/data/advent${npm_config_num} && wget --load-cookies cookies.txt -O advent${npm_config_year}/data/advent${npm_config_num}/input.txt https://adventofcode.com/${npm_config_year}/day/${npm_config_num}/input",
+    "testInput": "wget -O advent${npm_config_year}/data/advent${npm_config_day}/input.txt https://adventofcode.com/${npm_config_year}/day/${npm_config_day}/input"
+  },
+  "author": "Jason Grosman",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "jest": "^27.4.5",
+    "ts-jest": "^27.1.2",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "yarg": "^1.0.8"
+  }
+}

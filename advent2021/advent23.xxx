@@ -1,0 +1,434 @@
+// const burrow = new Map<number, space>();
+
+// interface space {
+//     id: number;
+//     nextRooms: number[];
+//     isHomeSpace: boolean;
+//     isDoorway: boolean;
+//     occupant?: 'A'|'B'|'C'|'D';
+// }
+
+// interface movement {
+//     type: 'A'|'B'|'C'|'D';
+//     start: number;
+//     destination: number;
+//     distance: number;
+//     cost: number;
+// }
+
+// const homes = [
+//     11, 12, 13, 14, 15, 16, 17, 18
+// ];
+
+// const doorways = [
+//     2, 4, 6, 8
+// ];
+
+// const hallways = [
+//     0, 1, 3, 5, 7, 9, 10
+// ];
+
+// const cost = {
+//     'A': 1,
+//     'B': 10,
+//     'C': 100,
+//     'D': 1000
+// };
+
+// const o = (index: number) => {
+//     if (burrow.get(index)!.occupant == undefined) {
+//         return '.';
+//     } else {
+//         return burrow.get(index)!.occupant;
+//     }
+
+// }
+// const printBurrow = () => {
+
+//     let s = `#############\n`;
+//     s += '#';
+//     for (let i = 0; i <= 10; i++) {
+//         s += o(i);
+//     }
+//     s += '#\n';
+//     s += `###${o(11)}#${o(12)}#${o(13)}#${o(14)}###\n`;
+//     s += `  #${o(15)}#${o(16)}#${o(17)}#${o(18)}#  \n`;
+//     s += `  #########  \n`;
+    
+//     // #0123456789X#
+//     // ###B#C#B#D###
+//     //   #A#D#C#A#
+//     //   #########
+
+//     return s;
+
+// }
+
+// const getDistance = (start: number, end: number, distance = 0, visited = '') => {
+//     visited += `|${start}|`;
+//     const startRoom = burrow.get(start)!;
+//     const endRoom = burrow.get(end)!;
+//     if (startRoom.nextRooms.includes(end) && endRoom.occupant == undefined) {
+//         return distance + 1;
+//     }
+//     else {
+//         let minDistance = Number.MAX_VALUE;
+//         for (let next of startRoom.nextRooms) {
+//             const nextRoom = burrow.get(next)!;
+//             if (!visited.includes(`|${next}|`) && nextRoom.occupant == undefined) {
+//                 const dist = getDistance(next, end, distance + 1, `${visited}`);
+//                 if (dist > -1) {
+//                     minDistance = Math.min(dist, minDistance);
+//                 }
+                
+//             }
+//         }
+//         if (minDistance === Number.MAX_VALUE) {
+//            return -1;
+//         } else {
+//             return minDistance;
+//         }
+//     }
+// }
+// const getWinningRoomsForOccupant = (occupant: string|undefined) => {
+//     switch (occupant) {
+//         case 'A' : {
+//             return [11, 15];
+//         }
+//         case 'B' : {
+//             return [12, 16];
+//         }
+//         case 'C' : {
+//             return [13, 17];
+//         }
+//         case 'D' : {
+//             return [14, 18];
+//         }
+//     }
+//     return [-1, -1];
+// }
+
+// const isEmptyRoom = (roomNumber: number) => {
+//     return burrow.get(roomNumber)!.occupant === undefined;
+// }
+
+// const roomContains = (roomNumber: number, occupant: string|undefined) => {
+//     return burrow.get(roomNumber)!.occupant === occupant;
+// }
+
+// const inWinningRoom = (roomNumber: number, occupant: string|undefined) => {
+//     const room = burrow.get(roomNumber)!;
+
+//     const [a, b] = getWinningRoomsForOccupant(occupant);
+//     if (roomNumber === b) {
+//         return true;
+//     } else if (roomNumber === a && roomContains(b, occupant)) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
+
+// const success = () => {
+
+//     return (roomContains(11, 'A') && roomContains(15, 'A')
+//     && roomContains(12, 'B') && roomContains(16, 'B')
+//     &&roomContains(13, 'C') && roomContains(17, 'C')
+//     && roomContains(14, 'D') && roomContains(18, 'D'));
+// }
+
+// const getBestMove = ( possibles: movement[] ) => {
+
+//     let minCost = Number.MAX_VALUE;
+
+//     let minMoves: movement[] = [];
+
+//     for (let m of possibles) {
+//         const [topRoom, bottomRoom] = getWinningRoomsForOccupant(m.type);
+//         if (m.destination === bottomRoom) {
+//             return m;
+//         } else if (m.destination === topRoom && roomContains(bottomRoom, m.type)) {
+//             return m;
+//         }
+
+//         if (m.cost < minCost) {
+//             minCost = m.cost;
+//             minMoves = [m];
+//         } else if (m.cost === minCost) {
+//             minMoves.push(m);
+//         }
+//     }
+
+//     return possibles[Math.floor(Math.random() * possibles.length)];;
+// }
+
+// // #############
+// // #0123456789X#
+// // ###B#C#B#D###
+// //   #A#D#C#A#
+// //   #########
+
+
+// burrow.set(0, {
+//     id: 0,
+//     nextRooms: [1],
+//     isHomeSpace: false,
+//     isDoorway: false
+// });
+// burrow.set(1, {
+//     id: 1,
+//     nextRooms: [0,2],
+//     isHomeSpace: false,
+//     isDoorway: false
+// });
+// burrow.set(2, {
+//     id: 2,
+//     nextRooms: [1,3,11],
+//     isHomeSpace: false,
+//     isDoorway: true
+// });
+// burrow.set(3, {
+//     id: 3,
+//     nextRooms: [2,4],
+//     isHomeSpace: false,
+//     isDoorway: false
+// });
+// burrow.set(4, {
+//     id: 4,
+//     nextRooms: [3,5,12],
+//     isHomeSpace: false,
+//     isDoorway: true
+// });
+// burrow.set(5, {
+//     id: 5,
+//     nextRooms: [4,6],
+//     isHomeSpace: false,
+//     isDoorway: false
+// });
+// burrow.set(6, {
+//     id: 6,
+//     nextRooms: [5,7,13],
+//     isHomeSpace: false,
+//     isDoorway: true
+// });
+// burrow.set(7, {
+//     id: 7,
+//     nextRooms: [6,8],
+//     isHomeSpace: false,
+//     isDoorway: false
+// });
+// burrow.set(8, {
+//     id: 8,
+//     nextRooms: [7,9,14],
+//     isHomeSpace: false,
+//     isDoorway: true
+// });
+// burrow.set(9, {
+//     id: 9,
+//     nextRooms: [8,10],
+//     isHomeSpace: false,
+//     isDoorway: false
+// });
+// burrow.set(10, {
+//     id: 10,
+//     nextRooms: [9],
+//     isHomeSpace: false,
+//     isDoorway: false
+// });
+// burrow.set(11, {
+//     id: 11,
+//     nextRooms: [2, 15],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+// burrow.set(12, {
+//     id: 12,
+//     nextRooms: [4, 16],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+// burrow.set(13, {
+//     id: 13,
+//     nextRooms: [6, 17],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+// burrow.set(14, {
+//     id: 14,
+//     nextRooms: [8, 18],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+// burrow.set(15, {
+//     id: 15,
+//     nextRooms: [11],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+// burrow.set(16, {
+//     id: 16,
+//     nextRooms: [12],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+// burrow.set(17, {
+//     id: 17,
+//     nextRooms: [13],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+// burrow.set(18, {
+//     id: 18,
+//     nextRooms: [14],
+//     isHomeSpace: true,
+//     isDoorway: false
+// });
+
+
+
+// // console.dir(burrow, {depth: null});
+
+// let possibleMoves: movement[] = [];
+// const getNextMoves = () => {
+//     for (let homeId = 0; homeId <= 18; homeId++) {
+//         const room = burrow.get(homeId)!;
+//         if (inWinningRoom(homeId, room.occupant)) {
+//             continue;
+//         } else if (isEmptyRoom(homeId)) {
+//             continue;
+//         } else if (room.occupant){
+//                 const [topRoom, bottomRoom] = getWinningRoomsForOccupant(room.occupant);
+//                 const distance = getDistance(homeId, bottomRoom);
+//                 if (distance > 1) {
+//                     possibleMoves.push({
+//                         type: room.occupant,
+//                         start: homeId,
+//                         destination: bottomRoom,
+//                         distance,
+//                         cost: distance * cost[room.occupant]
+//                     });
+//                 } else if (roomContains(bottomRoom, room.occupant)) {
+//                     const distance = getDistance(homeId, topRoom); 
+//                     if (distance > 1) {
+//                         possibleMoves.push({
+//                             type: room.occupant,
+//                             start: homeId,
+//                             destination: topRoom,
+//                             distance,
+//                             cost: distance * cost[room.occupant]
+//                         });
+//                     }
+//                 }
+                
+//                 if (homeId > 10) {
+//                     for (let r of hallways) {
+//                         const distance = getDistance(homeId, r); 
+//                         if (distance > 1) {
+//                             possibleMoves.push({
+//                                 type: room.occupant,
+//                                 start: homeId,
+//                                 destination: r,
+//                                 distance,
+//                                 cost: distance * cost[room.occupant]
+//                             });
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+// }
+
+// const removeMove = (moves: movement[], moveToDelete: movement) => {
+//     for (let i = 0; i < moves.length; i++) {
+//         if (moves[i].start === moveToDelete.start && moves[i].destination === moveToDelete.destination) {
+//             moves.splice(i, 1);
+//             break;
+//         }
+//     }
+
+
+// }
+
+// let minCost = Number.MAX_VALUE;
+// let minBurrowMoves = '';
+
+// nextAttempt:
+// for (let i = 0; i < 1000; i++) {
+    
+//     const visitedMap = new Map<string, boolean>();
+
+//     let burrowMoves = '';
+
+//     for (let r = 0; r <= 10; r++) {
+//         burrow.get(r)!.occupant = undefined;
+//     }
+//     burrow.get(11)!.occupant = 'B';
+//     burrow.get(12)!.occupant = 'B';
+//     burrow.get(13)!.occupant = 'D';
+//     burrow.get(14)!.occupant = 'D';
+//     burrow.get(15)!.occupant = 'C';
+//     burrow.get(16)!.occupant = 'C';
+//     burrow.get(17)!.occupant = 'A';
+//     burrow.get(18)!.occupant = 'A';
+//     visitedMap.set(printBurrow(), true);
+//     burrowMoves += printBurrow();
+
+//     let totalCost = 0;
+//     let isSuccess = false;
+//     possibleMoves = [];
+//     getNextMoves()
+
+//     const bestMoves: movement[] = [];
+
+//    // while (!isSuccess) {
+
+//     for (let j = 0; j < 20; j++) {
+//         // console.dir(possibleMoves);
+//         const bestMove = getBestMove(possibleMoves);
+//         if (bestMove === undefined) {
+//             continue nextAttempt;
+//         }
+//         bestMoves.push(bestMove);
+//         // console.dir(bestMove);
+//         burrow.get(bestMove.start)!.occupant = undefined;
+//         burrow.get(bestMove.destination)!.occupant = bestMove.type;
+//         if (visitedMap.has(printBurrow())) {
+//             burrow.get(bestMove.destination)!.occupant = undefined;
+//             burrow.get(bestMove.start)!.occupant = bestMove.type;
+//             continue;
+//         } else {
+//             visitedMap.set(printBurrow(), true);
+//         }
+
+
+//         burrowMoves += printBurrow();
+//         // console.log(printBurrow());
+//         // console.log(`cost: ${bestMove.cost}`);
+//         totalCost += bestMove.cost;
+//         isSuccess = success();
+//         if (isSuccess) {
+//             break;
+//         }
+//         // console.dir(burrow);
+
+//         possibleMoves = [];
+//         getNextMoves();
+//         if (possibleMoves.length === 0) {
+//             totalCost = Number.MAX_VALUE;
+//             break;
+//         }
+//     }
+
+//     //console.dir(bestMoves);
+//     console.log(`total cost: ${totalCost}`);
+    
+//     if (minCost < totalCost) {
+//         minBurrowMoves = burrowMoves;
+//     }
+//     minCost = Math.min(minCost, totalCost);
+// }
+
+// console.log(minBurrowMoves);
+// console.log(`min cost: ${minCost}`);
+
+
