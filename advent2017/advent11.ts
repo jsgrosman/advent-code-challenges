@@ -2,35 +2,47 @@ import { getFileContents } from "../Utils";
 
 let directions = getFileContents().trim();
 
-directions = directions.replace(/se,sw/g, 's');
-directions = directions.replace(/sw,se/g, 's');
-directions = directions.replace(/ne,nw/g, 'n');
-directions = directions.replace(/nw,ne/g, 'n');
 
 
 let verticalDistance = 0;
 let horizontalDistance = 0;
 
-for (let dir of directions.split(',')) {
-
-    if (dir.includes('n')) {
-        verticalDistance++;
-    } else if (dir.includes('s')) {
-        verticalDistance--;
-    }
-
-    if (dir.includes('e')) {
-        horizontalDistance++;
-    } else if (dir.includes('w')) {
-        horizontalDistance--;
-    }
-
+const getDistance = () => {
+    const absoluteVert =  Math.abs(verticalDistance);
+    const absoluteHoriz = Math.abs(horizontalDistance);
+    return absoluteHoriz + Math.max(0, (absoluteVert - absoluteHoriz)/2);
 }
 
-const absoluteVert =  Math.abs(verticalDistance);
-const absoluteHoriz = Math.abs(horizontalDistance);
+let maxDistance = 0;
+for (let dir of directions.split(',')) {
 
-console.log(`ah: ${absoluteHoriz}, av: ${absoluteVert}`);
+    switch (dir) {
+        case 'n':
+            verticalDistance += 2;
+            break;
+        case 's':
+            verticalDistance -= 2;
+            break;
+        case 'ne':
+            horizontalDistance += 1;
+            verticalDistance += 1;
+            break;
+        case 'nw':
+            horizontalDistance -= 1;
+            verticalDistance += 1;
+            break;
+        case 'se':
+            horizontalDistance += 1;
+            verticalDistance -= 1;
+            break;        
+        case 'sw':
+            horizontalDistance -= 1;
+            verticalDistance -= 1;
+            break;
+    }
 
-let dist = absoluteHoriz + Math.max(0, (absoluteVert - absoluteHoriz));
-console.log(`Distance = ${dist}`);
+    maxDistance = Math.max(maxDistance, getDistance());
+}
+
+console.log(`Distance = ${getDistance()}`);
+console.log(`Max: ${maxDistance}`);
