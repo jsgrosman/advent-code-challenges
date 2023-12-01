@@ -1,0 +1,3 @@
+import { getFileContents } from "../Utils";
+const contents = getFileContents();
+const lines = contents.trim().split(/\n/g);

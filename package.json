@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "advent2023": "ts-node advent2023/${npm_config_code} -f advent2023/data/${npm_config_data}",
     "advent2022": "ts-node advent2022/${npm_config_code} -f advent2022/data/${npm_config_data}",
     "advent2021": "ts-node advent2021/${npm_config_code} -f advent2021/data/${npm_config_data}",
     "advent2020": "ts-node advent2020/${npm_config_code} -f advent2020/data/${npm_config_data}",
@@ -26,6 +27,8 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
+    "md5-hex": "^5.0.0",
+    "ts-md5": "^1.3.1",
     "yarg": "^1.0.8"
   }
 }

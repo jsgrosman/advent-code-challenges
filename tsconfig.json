@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+      "target": "ES2021",        /* Specify ECMAScript target version */
+      "module": "commonjs",      /* Use CommonJS module system for Node.js */
+      "strict": true,            /* Enable all strict type-checking options */
+      "esModuleInterop": true,    /* Enables emit interoperability between CommonJS and ES Modules via `import = require()` syntax */
+      "skipLibCheck": true,      /* Skip type checking of declaration files */
+      "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file */
+      "outDir": "./dist",        /* Redirect output structure to the directory */
+      "rootDir": "./src",        /* Specify the root directory of input files */
+      "baseUrl": ".",            /* Base directory to resolve non-relative module names */
+      "paths": {
+        "*": ["node_modules/*", "src/types/*"]  /* Module name aliases for easier imports */
+      },
+      "typeRoots": ["node_modules/@types"],  /* List of folders to include type definitions from */
+      "lib": ["es2021"],         /* Specify library files to be included in the compilation */
+      "resolveJsonModule": true, /* Include modules imported with .json extension */
+    },
+    "include": ["src/**/*.ts"], /* Specify files to be included in compilation */
+    "exclude": ["node_modules"] /* Specify files to be excluded from compilation */
+  }
+  
