@@ -13,4 +13,4 @@ datafile="$3"
 
 # Run the TypeScript file using ts-node
 
-ts-node "advent${year}/advent${day}.ts" -f "advent${year}/data/advent${day}/${datafile}"
+time ts-node "advent${year}/advent${day}.ts" -f "advent${year}/data/advent${day}/${datafile}"

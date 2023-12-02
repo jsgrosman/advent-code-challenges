@@ -1,3 +1,19 @@
 import { getFileContents } from "../Utils";
 const contents = getFileContents();
 const lines = contents.trim().split(/\n/g);
+
+const part1 = () => {
+
+
+
+};
+
+
+const part2 = () => {
+
+
+
+};
+
+part1();
+part2();
