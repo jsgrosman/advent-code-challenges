@@ -44,7 +44,7 @@ if [ ! -f "${testFile}" ]; then
   cat <<EOL >"${testFile}"
 // test/advent${day}.spec.js
 
-import * from '../${dayDir}/advent${day}';
+import * from '../advent${day}';
 
 test('Example Test', () => {
   expect(exampleFunction()).toBe('expectedValue');
@@ -67,6 +67,6 @@ fi
 inputFile="${dataDir}/input.txt"
 if [ ! -f "${inputFile}" ]; then
   echo "Downloading input file..."
-  wget --load-cookies cookies.txt -O "${inputFile}" "https://adventofcode.com/${year}/day/${day}/input"
+  wget --load-cookies cookies.txt  -U "grosmanjs@gmail.com" -O "${inputFile}" "https://adventofcode.com/${year}/day/${day}/input"
   echo "Downloaded input file: ${inputFile}"
 fi
