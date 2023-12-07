@@ -1,77 +1,76 @@
 import { getFileContents } from "../Utils";
+import Point from "../lib/Point";
+    
 
-const contents = getFileContents();
-const claims = contents.trim().split(/\n/g);
-
-const locations: number[][][] = [];
-const locationsStr: string[][] = [];
-const allCoords: number[][] = [];
-const allCoordsStr: string[] = [];
-
-for (let claim of claims) {
-    const claimList = claim.split(': ');
-    const startCoord = claim.split(' ')[2];
-    console.dir(startCoord);
-    const size = claimList[1].split('x');
-    console.dir(size);
-    const startHoriz = Number(startCoord.split(',')[0]);
-    const startVert = Number(startCoord.split(',')[1].split(':')[0]);
-    const coordinates: number[][] = [];
-    const coordinatesStr: string[] = [];
-    const sizeHoriz = Number(size[0]);
-    const sizeVert = Number(size[1]);
-    for (let i = 0; i < sizeHoriz; i ++){
-        for (let b = 0; b < sizeVert; b ++){
-            const coord = [startHoriz+i,startVert+b];
-            const coordStr = String(coord.join(','));
-            coordinates.push(coord);
-            coordinatesStr.push(coordStr);
-            allCoords.push(coord);
-            allCoordsStr.push(coordStr);
+const part1 = () => {
+    const contents = getFileContents();
+    const lines = contents.trim().split(/\n/g);
+    
+    const claimMap: Map<string, number> = new Map<string, number>();
+    
+    for (let claim of lines) {
+        const [_, claimId, claimX, claimY, claimWidth, claimHeight] = claim.match(/#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/)!;
+        
+        for (let x = Number(claimX); x < Number(claimX) + Number(claimWidth); x++) {
+            for (let y = Number(claimY); y < Number(claimY) + Number(claimHeight); y++) {
+                const claimPoint = new Point(x, y);
+                const claimKey = claimPoint.toString();
+                if (claimMap.has(claimKey)) {
+                    claimMap.set(claimKey, claimMap.get(claimKey)! + 1);
+                } else {
+                    claimMap.set(claimKey, 1);
+                }
+            }
         }
     }
-    locations.push(coordinates);
-    locationsStr.push(coordinatesStr);
-}
+    
+    const total = Array.from(claimMap.values()).filter( v => v > 1).length;
+    console.log(`total = ${total}`);
+};
 
-//console.dir(allCoords);
-const uniqueCoords: number [][] = [];
-const uniqueCoordsStr: string[] = [];
-const overlapCoords: number[][] = [];
-const overlapCoordsStr: string[] = [];
 
-for (let location of locations){
-    //console.dir(location);
-    for (let coord of location){
-        //console.dir(coord);
-        //console.log(uniqueCoords.indexOf(coord));
-        if (uniqueCoords.indexOf(coord) == -1){
-            uniqueCoords.push(coord);
-            //console.log('unique');
-        }
-        else if (!overlapCoords.indexOf(coord) || overlapCoords.indexOf(coord) == 0){
-            overlapCoords.push(coord);
+const part2 = () => {
+    const contents = getFileContents();
+    const lines = contents.trim().split(/\n/g);
+    
+    const claimMap: Map<string, number> = new Map<string, number>();
+    
+    for (let claim of lines) {
+        const [_, claimId, claimX, claimY, claimWidth, claimHeight] = claim.match(/#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/)!;
+        
+        for (let x = Number(claimX); x < Number(claimX) + Number(claimWidth); x++) {
+            for (let y = Number(claimY); y < Number(claimY) + Number(claimHeight); y++) {
+                const claimPoint = new Point(x, y);
+                const claimKey = claimPoint.toString();
+                if (claimMap.has(claimKey)) {
+                    claimMap.set(claimKey, claimMap.get(claimKey)! + 1);
+                } else {
+                    claimMap.set(claimKey, 1);
+                }
+            }
         }
     }
-}
-for (let location of locationsStr){
-    //console.dir(location);
-    for (let coord of location){
-        //console.dir(coord);
-        //console.log(uniqueCoordsStr.indexOf(coord));
-        if (uniqueCoordsStr.indexOf(coord) == -1){
-            uniqueCoordsStr.push(coord);
-            //console.log('unique');
-        }
-        else if (!overlapCoordsStr.indexOf(coord) || overlapCoordsStr.indexOf(coord) == 0){
-            overlapCoordsStr.push(coord);
-        }
-    }
-}
-//console.dir(uniqueCoords);
-console.dir(uniqueCoordsStr);
 
-const overlaps = overlapCoords.length;
-const overlapsStr = overlapCoordsStr.length;
-//console.log(overlaps);
-console.log(overlapsStr);
+    NEXT_CLAIM:
+    for (let claim of lines) {
+        const [_, claimId, claimX, claimY, claimWidth, claimHeight] = claim.match(/#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/)!;
+        
+        for (let x = Number(claimX); x < Number(claimX) + Number(claimWidth); x++) {
+            for (let y = Number(claimY); y < Number(claimY) + Number(claimHeight); y++) {
+                const claimPoint = new Point(x, y);
+                const claimKey = claimPoint.toString();
+                if (claimMap.has(claimKey)) {
+                    const value = claimMap.get(claimKey)!;
+                    if (value > 1) {
+                       continue NEXT_CLAIM; 
+                    }
+                } 
+            }
+        }
+
+        console.log(`Safe Claim: ${claimId}`);
+    }
+};
+
+// part1();
+part2();

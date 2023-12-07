@@ -1,14 +1,12 @@
-interface BFSNode {
+interface Node {
     data: any;
     distance: number;
     path: any[];
     // TODO: add cost? or is that just distance?
 }
 
-
-
 // Helper function to get the right node from the set, using a given compare function
-const getNodeFromSet = ( compare: Function, compareTo: any,  s: Set<BFSNode>   ) => {
+const getNodeFromSet = ( compare: Function, compareTo: any,  s: Set<Node>) => {
     for (const node of s) { 
         if (compare(node.data, compareTo)) {
             return node;
@@ -18,30 +16,28 @@ const getNodeFromSet = ( compare: Function, compareTo: any,  s: Set<BFSNode>   )
 } 
 
 // TODO: Add A* heuristic?
-// TODO: pass in getCost() function?
 
 /**
  * 
- * @param startingData What ever the starting location is
+ * @param start What ever the starting location is
  * @param compareFunction Compare two instance of the node type
  * @param getNeighbors Get valid neighbors of the current node
  * @param destination What you're looking for
  * @returns destination or null, if not found
  */
-export const doBFS = ( startingData: any, destination: any , compareFunction: Function, getNeighbors: Function, costFunction: Function | undefined = undefined) => {
-    const Visited: Set<BFSNode> = new Set<BFSNode>();
-    const ToBeVisted: Set<BFSNode> = new Set<BFSNode>();
+export const execute = ( start: any, destination: any , compareFunction: Function, getNeighbors: Function, costFunction: Function | undefined = undefined) => {
+    const Visited: Set<Node> = new Set<Node>();
+    const ToBeVisted: Set<Node> = new Set<Node>();
 
     // if no cost function included, then just assume it's always 1
     if (!costFunction) {
         costFunction = (v: any) => 1;
     }
     
-    
     ToBeVisted.add( {
-        data: startingData,
+        data: start,
         distance: 0,
-        path: [startingData]
+        path: [start]
     });
 
     while (ToBeVisted.size > 0) {
@@ -55,7 +51,6 @@ export const doBFS = ( startingData: any, destination: any , compareFunction: Fu
         }
         ToBeVisted.delete(currentNode);
         Visited.add(currentNode);
-
 
         // Found it!
         if (compareFunction(currentNode.data, destination)) {

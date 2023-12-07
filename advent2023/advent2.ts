@@ -12,16 +12,15 @@ const part1 = () => {
     for (const line of lines) {
         let isValid = true;
         gameId++;
-        line.split(';').map( (eachPull: string) => {
-            Array.from(eachPull.matchAll(/(\d+) (red|blue|green)/g)).map( (pull) => {
-                const num = Number(pull[1]);
-                const color = pull[2] as keyof typeof max_colors;
-                if (num > max_colors[color]) {
-                    isValid = false;
-                    return;
-                }
-            });
+        Array.from(line.matchAll(/(\d+) (red|blue|green)/g)).map( (pull) => {
+            const num = Number(pull[1]);
+            const color = pull[2] as keyof typeof max_colors;
+            if (num > max_colors[color]) {
+                isValid = false;
+                return;
+            }
         });
+        
         if (isValid) {
             gameIdTotal += gameId;
         }
@@ -35,13 +34,12 @@ const part2 = () => {
     for (const line of lines) {
         const gameCounter = {'green': 0, 'red': 0, 'blue': 0};
 
-        line.split(';').map( (eachPull: string) => {
-            Array.from(eachPull.matchAll(/(\d+) (red|blue|green)/g)).map( (pull) => {
-                const num = Number(pull[1]);
-                const color = pull[2] as keyof typeof gameCounter;
-                gameCounter[color] = Math.max(gameCounter[color], num);
-            });
+        Array.from(line.matchAll(/(\d+) (red|blue|green)/g)).map( (pull) => {
+            const num = Number(pull[1]);
+            const color = pull[2] as keyof typeof gameCounter;
+            gameCounter[color] = Math.max(gameCounter[color], num);
         });
+        
         powerTotal += (gameCounter['green'] * gameCounter['red'] * gameCounter['blue']);
 
     }
