@@ -2,23 +2,25 @@ import { getFileContents } from "../Utils";
 import Counter from "../lib/Counter";
 
 
-// const CardOrder = ['A','K','Q','J','T','9','8','7','6','5','4','3','2']; // part 1
-const CardOrder = ['A','K','Q','T','9','8','7','6','5','4','3','2','J']; // part 2
+const CardOrderPart1 = ['A','K','Q','J','T','9','8','7','6','5','4','3','2']; // part 1
+const CardOrderPart2 = ['A','K','Q','T','9','8','7','6','5','4','3','2','J']; // part 2
 const HandOrder = ['Five','Four','Full','Three','Two','One','High'];
 
-const sortCard = (a: string, b: string) => {
-   return CardOrder.indexOf(a) - CardOrder.indexOf(b);
+const sortCard = (a: string, b: string, cardOrder: string[]) => {
+   return cardOrder.indexOf(a) - cardOrder.indexOf(b);
 }
 
-const sortHand = (a: Hand, b: Hand) => {
-    let result = HandOrder.indexOf(a.handType) - HandOrder.indexOf(b.handType);
-    let handIndex = 0;
-    while (result === 0) {
-        result = sortCard(a.cards[handIndex], b.cards[handIndex]);
-        handIndex++;
-    }
+const sortHand = (cardOrder: string[], handOrder: string[] ) => {
+    return (a: Hand, b: Hand) => {
+        let result = handOrder.indexOf(a.handType) - handOrder.indexOf(b.handType);
+        let handIndex = 0;
+        while (result === 0) {
+            result = sortCard(a.cards[handIndex], b.cards[handIndex], cardOrder);
+            handIndex++;
+        }
 
-    return result;
+        return result;
+    }
  }
 
 class Hand {
@@ -27,7 +29,7 @@ class Hand {
     handType: string;
     bet: number;
 
-    constructor(hand: string, bet: number) {
+    constructor(hand: string, bet: number, withJokers: boolean) {
         this.cards = hand.split('');
         this.cardCounter = new Counter<string>();
 
@@ -35,7 +37,9 @@ class Hand {
             this.cardCounter.increment(card);
         }
 
-        this.handleJokers(); // for part 2
+        if (withJokers) {
+            this.handleJokers(); // for part 2
+        }
 
         this.cardCounter.sort();
         this.handType = this.getHandType()!;
@@ -87,18 +91,15 @@ const part1 = () => {
     const hands: Hand[] = [];
     for (let line of lines) {
         const [handString, bet] = line.split(/\s+/);
-        const hand = new Hand(handString, Number(bet));
-        // console.log(`${handString} => ${hand.getHandType()}`);
-
+        const hand = new Hand(handString, Number(bet), false);
         hands.push(hand);
     }
 
-    hands.sort(sortHand);
+    hands.sort(sortHand(CardOrderPart1, HandOrder));
     hands.reverse();
-    console.dir(hands);
 
     const total = hands.reduce( (p, c, i) => {return p + (c.bet * (i + 1))}, 0);
-    console.log(`total winnings = ${total}`);
+    console.log(`part 1: total winnings = ${total}`);
 
 };
 
@@ -110,16 +111,16 @@ const part2 = () => {
     const hands: Hand[] = [];
     for (let line of lines) {
         const [handString, bet] = line.split(/\s+/);
-        const hand = new Hand(handString, Number(bet));
+        const hand = new Hand(handString, Number(bet), true);
         hands.push(hand);
     }
 
-    hands.sort(sortHand);
+    hands.sort(sortHand(CardOrderPart2, HandOrder));
     hands.reverse();
 
     const total = hands.reduce( (p, c, i) => {return p + (c.bet * (i + 1))}, 0);
-    console.log(`total winnings = ${total}`);
+    console.log(`part 2: total winnings = ${total}`);
 };
 
-// part1();
+part1();
 part2();
