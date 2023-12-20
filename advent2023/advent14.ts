@@ -121,21 +121,16 @@ const part2 = () => {
         let load = 0;
         for (let col = 0; col < grid[0].length; col++) {
             
-            let numEmptySpaces = 0;
             let column = getColumn(grid, col);
             for (let row = 0; row < column.length; row++) {
                 let edge = column.length;
     
                 if (column[row] === '#') {
                     edge = row + 1;
-                    numEmptySpaces = 0;
                 }
-                if (column[row] === '.') {
-                    numEmptySpaces++;
-                }
-                
+               
                 if (column[row] === 'O') {
-                    load += edge - row; // + numEmptySpaces;
+                    load += edge - row; 
                 }
             }
         }
@@ -151,6 +146,7 @@ const part2 = () => {
         const key = JSON.stringify(grid);
         if (cycleCache.has(key)) {
             const cycleStart = cycleCache.get(key)!;
+            console.log(`Cycle Start: ${cycleStart}`);
             cycleLength = i - cycleStart;
             break;
         }
@@ -161,6 +157,7 @@ const part2 = () => {
         tiltEast(grid);
         cycleCache.set(key, i);
     }
+    console.log(`Cycle Length: ${cycleLength}`);
 
     for (; i < CYCLES - cycleLength; i += cycleLength) {
 
