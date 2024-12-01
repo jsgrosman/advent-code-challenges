@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as yargs from "yargs";
+import yargs from "yargs";
 
 export const shuffle = (array: string[]) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -158,11 +158,11 @@ export const getDownNeighborValues = ( p: point, arr: any[][] ) => {
 
 
 export const getFileContents = () => {
-    const args = yargs.options({
+    const argObj = yargs(process.argv.slice(2)).options({
         'file': { type: 'string', demandOption: true, alias: 'f' },
-    }).argv;
-    
-    const fullFilePath = `${process.cwd()}/${args['file']}`;
+    }).parseSync();
+
+    const fullFilePath = `${process.cwd()}/${argObj.file}`;
 
     if (!fs.existsSync(fullFilePath)) {
         console.error("No such file: " + fullFilePath);

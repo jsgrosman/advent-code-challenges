@@ -13,7 +13,7 @@
         "*": ["node_modules/*", "src/types/*"]  /* Module name aliases for easier imports */
       },
       "typeRoots": ["node_modules/@types"],  /* List of folders to include type definitions from */
-      "lib": ["es2021"],         /* Specify library files to be included in the compilation */
+      "lib": ["es2023"],         /* Specify library files to be included in the compilation */
       "resolveJsonModule": true, /* Include modules imported with .json extension */
     },
     "include": ["src/**/*.ts"], /* Specify files to be included in compilation */
