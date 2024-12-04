@@ -13,19 +13,18 @@ const part1 = () => {
 
 const part2 = () => {
     const contents = getFileContents();
-    const results = Array.from(contents.matchAll(/mul\((\-?\d+),(\-?\d+)\)|don?\'?t?/g));
 
-    let doMult = true;
-    const sum = results.reduce( (p, c) => {
-        if (c[0] === 'do') {
-            doMult = true;
-        } else if (c[0] === 'don\'t') {
-            doMult = false;
-        } else if (doMult) {
-            return p + (+c[1] * +c[2]);
-        } 
-        return p;
-    }, 0);
+    const sum = Array.from(contents.matchAll(/mul\((\-?\d+),(\-?\d+)\)|don?'?t?\(\)/g)).reduce( ([sum,enabled], [instr, mult1, mult2]) => {
+        if (instr === 'do()') {
+            return [sum, true];
+        } else if (instr === 'don\'t()') {
+            return [sum, false];
+        } else if (enabled) {
+            return [+sum + (+mult1 * +mult2), enabled];
+        } else {
+            return [sum,enabled];
+        }
+    }, [0, true])[0];
     console.log(sum);
 };
 
