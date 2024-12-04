@@ -6,6 +6,8 @@ const part1 = () => {
     const serialNumber = 8772;
 
     const grid: Map<string, number> = new Map<string, number>();
+    const allSquares: Map<string, number> = new Map<string, number>();
+
     
     for (let x = 1; x < 300; x++) {
         for (let y = 1; y < 300; y++) {
@@ -17,42 +19,49 @@ const part1 = () => {
             power = Math.floor(power/100 % 10);
             power -= 5;
             grid.set(`${x},${y}`, power);
+            allSquares.set(`${x},${y},1`, power);
         }
     }
 
     // console.dir(grid);
 
-    let powerX = 1;
-    let powerY = 1;
-    let powerSize = 1;
     let maxPower = 0;
-
-    for (let x = 1; x <= 300; x++) {
-        for (let y = 1; y <= 300; y++) {
-
-            for (let squareSize = 1; squareSize <= 300; squareSize++) {
-                if (x + squareSize > 300 || y + squareSize > 300) {
-                    break;
-                }
-
-                let total = 0;
-                for (let dx = 0; dx < squareSize; dx++) {
-                    for (let dy = 0; dy < squareSize; dy++) {
-                        total += grid.get(`${x + dx},${y + dy}`)!;
+    let coord = '';
+    for (let squareSize = 2; squareSize <= 300; squareSize++) {
+        for (let x = 1; x < 300; x++) {
+            for (let y = 1; y < 300; y++) {
+                
+                if (x + squareSize < 300 && y + squareSize < 300) {
+                    let power = allSquares.get(`${x + 1},${y + 1},${squareSize - 1}`)!;
+                    power += grid.get(`${x},${y}`)!;
+                    for (let x1 = x + 1, y1 = y + 1; x1 < x + squareSize; x1++, y1++) {
+                        power += grid.get(`${x1},${y}`)! + grid.get(`${x},${y1}`)!
+                    } 
+                    allSquares.set(`${x},${y},${squareSize}`, power);
+                    
+                    if (power > maxPower) {
+                        maxPower = power;
+                        coord = `${x},${y},${squareSize}`;
+                        console.log(`${x},${y},${squareSize}:${power} -> ${allSquares.size}`);
                     }
                 }
-                if (total > maxPower) {
-                    maxPower = total;
-                    powerSize = squareSize
-                    powerX = x;
-                    powerY = y;
-                    console.log(`max: ${maxPower}: ${powerX},${powerY},${powerSize}`);
-                }
-            } 
+            }
         }
     }
     
-    console.log(`max: ${maxPower}: ${powerX},${powerY},${powerSize}`);
+
+    // let maxPower = 0;
+    // let coord = '';
+
+    // for (let [key, value] of allSquares.entries()) {
+
+    //     if (value > maxPower) {
+    //         maxPower = value;
+    //         coord = key;
+    //     }
+    // }
+    // console.log(coord);
+
 };
 
 
