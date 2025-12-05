@@ -1,6 +1,5 @@
 import { getFileContents, point } from "../Utils";
 
-
 const part1 = () => {
     const contents = getFileContents();
     const lines = contents.trim().split(/\n/g);

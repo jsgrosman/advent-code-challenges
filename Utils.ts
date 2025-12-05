@@ -133,6 +133,20 @@ export const getLeftNeighborValues = ( p: point, arr: any[][] ) => {
     return row.slice(0, p.x).reverse();
 }
 
+export const getDiagNeighborValues = ( p: point, arr: any[][], dx: number, dy: number ) => {
+    const ret: any[] = [];
+    let contents: any;
+    let dx1 = dx;
+    let dy1 = dy;
+    while (arr[p.y + dy1] && (contents = arr[p.y + dy1][p.x + dx1]) != undefined) {
+        ret.push(contents);
+        dx1 += dx;
+        dy1 += dy;
+    }
+
+    return ret;
+}
+
 export const getRightNeighborValues  = ( p: point, arr: any[][] ) => {
     const row = arr[p.y];
     return row.slice(p.x + 1);
@@ -171,7 +185,7 @@ export const getFileContents = () => {
     return fs.readFileSync(fullFilePath, 'utf8');
 }
 
-export const sortHashmap = (h: Map<string, any>) => {
+export const sortHashmap = (h: Map<any, any>) => {
     return new Map([...h.entries()].sort((a, b) => b[1] - a[1]));
 }
 

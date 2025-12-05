@@ -158,5 +158,88 @@ const part2 = () => {
     console.log(`total = ${total}`);
 };
 
-part1();
-part2();
+const part2a = () => {
+    const contents = getFileContents();
+    const lines = contents.trim().split(/\n/g);
+
+    const grid: string[][] = [];
+    grid.push(new Array(lines[0].length).fill('XX'));
+    for (let line of lines) {
+        grid.push(['XX', ...line.split(''), 'XX']);
+    }
+    grid.push(new Array(lines[0].length).fill('XX'));
+
+    console.dir(grid);
+
+    const Visited: string[] = [];
+    const searchForPlot = (startingPoint: string, crop: string) => {
+      
+        const next: string[] = [];
+        next.push(startingPoint);
+
+        let area = 0;
+        let sides = 0
+        while (next.length > 0) {
+            const [currentX, currentY] = next.shift()!.split(',', 2).map(Number);
+            Visited.push(`${currentX},${currentY}`);
+            area++;
+
+            for (const [dx, dy] of [[0,1],[1,0],[-1,0],[0,-1]]) {
+                const neighborCrop = grid[dy + currentY][dx + currentX];
+                if (neighborCrop === crop) {
+                    if (!Visited.includes(`${dx + currentX},${dy + currentY}`) && !next.includes(`${dx + currentX},${dy + currentY}`)) {
+                        next.push(`${dx + currentX},${dy + currentY}`);
+                    }
+                }
+            }
+
+            
+            let corners = 4;
+            for (const [dx, dy] of [[-1,0],[0,-1]]) {
+                if (grid[dy + currentY][dx + currentX] === crop) {
+                    corners--;
+                    break;
+                }
+            }
+
+            for (const [dx, dy] of [[1,0],[0,1]]) {
+                if (grid[dy + currentY][dx + currentX] === crop) {
+                    corners--;
+                    break;
+                }
+            }
+
+            for (const [dx, dy] of [[1,0],[0,-1]]) {
+                if (grid[dy + currentY][dx + currentX] === crop) {
+                    corners--;
+                    break;
+                }
+            }
+            
+            for (const [dx, dy] of [[-1,0],[0,1]]) {
+                if (grid[dy + currentY][dx + currentX] === crop) {
+                    corners--;
+                    break;
+                }
+            }
+            sides += corners;
+
+        }
+       
+        return area * sides;
+    }
+
+    let total = 0;
+    for (let y = 0; y < grid.length; y++) {
+        for (let x = 0; x < grid[y].length; x++) {
+            const crop = grid[y][x];
+            if (crop !== 'XX' && !Visited.includes(`${x},${y}`)) {
+                total += searchForPlot(`${x},${y}`, crop);
+            }
+        }
+    }
+    console.log(`total = ${total}`);
+};
+
+// part1();
+part2a();

@@ -1,5 +1,8 @@
 import { getFileContents, point } from "../Utils";
 
+const dirToMove: { [key: string]: [number, number] } = {'<': [-1, 0],'>': [1, 0],'^': [0, -1],'v': [0, 1]}
+let HEIGHT = 0;
+let WIDTH = 0;
 
 const part1 = () => {
     const contents = getFileContents();
@@ -9,39 +12,37 @@ const part1 = () => {
     let robot: point = {x: 0, y: 0};
     const walls: string[] = [];
 
-    let index = 0;
-    for (; index < lines.length; index++) {
-        if (lines[index].trim() === '') {
+ 
+
+    let row = 0;
+    for (; row < lines.length; row++) {
+        if (lines[row].trim() === '') {
             break;
         }
-        for (let col = 0; col < lines[index].length; col++) {
-            if (lines[index][col] === '#') {
-                walls.push(`${col},${index}`);
-            } else if (lines[index][col] === 'O') {
-                boxes.push(`${col},${index}`);
-            } else if (lines[index][col] === '@') {
-                robot = { x: col, y: index};
-            } 
+        for (let col = 0; col < lines[row].length; col++) {
+            switch (lines[row][col]) {
+                case '#':
+                    walls.push(`${col},${row}`);
+                    break;
+                case 'O':
+                    boxes.push(`${col},${row}`);
+                    break;
+                case '@':
+                    robot = { x: col, y: row};
+                    break;    
+            }
         }
     }
+    HEIGHT = row;
+    WIDTH = lines[0].length;
 
     const moves: string[] = [];
-    index++;
-    for (; index < lines.length; index++) {
-        moves.push(...lines[index].split(''));
-    }
-
-    console.dir(moves);
-
-    const dirToMove: { [key: string]: [number, number] } = {
-        '<': [-1, 0],
-        '>': [1, 0],
-        '^': [0, -1],
-        'v': [0, 1],
+    row++;
+    for (; row < lines.length; row++) {
+        moves.push(...lines[row].split(''));
     }
 
     const print = (width: number, height: number) => {
-
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 if (robot.x === x && robot.y === y) {
@@ -59,10 +60,7 @@ const part1 = () => {
     }
 
     const moveBox = (m: string, boxPos: string) => {
-        const [boxX, boxY] = boxPos.split(',',2).map(Number);
-        const nextBoxX = boxX + dirToMove[m]![0];
-        const nextBoxY = boxY + dirToMove[m]![1];
-        const nextBoxStr = `${nextBoxX},${nextBoxY}`;
+        const nextBoxStr = boxPos.split(',',2).map(Number).map( (v, i) => v + dirToMove[m]![i]).join(',');
         if (walls.includes(nextBoxStr)) {
             return false;
         } else if (boxes.includes(nextBoxStr)) {
@@ -81,7 +79,6 @@ const part1 = () => {
     }
 
     for (let m of moves) {
-        // console.log(m);
         const nextLoc = {x: robot.x + dirToMove[m]![0]!, y: robot.y + dirToMove[m]![1]!};
         const nextLocStr = `${nextLoc.x},${nextLoc.y}`;
         if (walls.includes(nextLocStr)) {
@@ -93,9 +90,7 @@ const part1 = () => {
         } else {
             robot = nextLoc;
         }
-        // console.dir(boxes);
-        // console.dir(robot);
-        // print(10,10);
+        print(WIDTH, HEIGHT);
     }
 
     const total = boxes.reduce( (p, c) => {
@@ -115,40 +110,33 @@ const part2 = () => {
     let robot: point = {x: 0, y: 0};
     const walls: string[] = [];
 
-    let index = 0;
-    for (; index < lines.length; index++) {
-        if (lines[index].trim() === '') {
+    let row = 0;
+    for (; row < lines.length; row++) {
+        if (lines[row].trim() === '') {
             break;
         }
-        for (let col = 0; col < lines[index].length; col++) {
-            if (lines[index][col] === '#') {
-                walls.push(`${col * 2},${index}`);
-                walls.push(`${(col * 2) + 1},${index}`);
-            } else if (lines[index][col] === 'O') {
-                boxes.push(`${col * 2},${index}`);
-            } else if (lines[index][col] === '@') {
-                robot = { x: col * 2, y: index};
+        for (let col = 0; col < lines[row].length; col++) {
+            if (lines[row][col] === '#') {
+                walls.push(`${col * 2},${row}`);
+                walls.push(`${(col * 2) + 1},${row}`);
+            } else if (lines[row][col] === 'O') {
+                boxes.push(`${col * 2},${row}`);
+            } else if (lines[row][col] === '@') {
+                robot = { x: col * 2, y: row};
             } 
         }
     }
+    HEIGHT = row;
+    WIDTH = lines[0].length * 2;
 
     const moves: string[] = [];
-    index++;
-    for (; index < lines.length; index++) {
-        moves.push(...lines[index].split(''));
+    row++;
+    for (; row < lines.length; row++) {
+        moves.push(...lines[row].split(''));
     }
 
-    console.dir(moves);
-
-    const dirToMove: { [key: string]: [number, number] } = {
-        '<': [-1, 0],
-        '>': [1, 0],
-        '^': [0, -1],
-        'v': [0, 1],
-    }
 
     const print = (width: number, height: number) => {
-
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 if (robot.x === x && robot.y === y) {
@@ -166,132 +154,165 @@ const part2 = () => {
         }
     }
 
-    const moveBox = (m: string, boxPos: string) => {
-        console.log(`m = ${m}, ${boxPos}`);
+    print(WIDTH, HEIGHT);
 
-        const [boxX, boxY] = boxPos.split(',',2).map(Number);
+    const moveLeft = (robotX: number, robotY: number) => {
+        const boxesToMove: string[] = [];
+        for (let x = robotX - 2; x >= 0; x -= 2) {
+            if (walls.includes(`${x + 1},${robotY}`)) {
+                return;
+            } else if (boxes.includes(`${x},${robotY}`)) {
+                boxesToMove.push(`${x},${robotY}`);
+            } else {
+                robot.x = robot.x - 1;
+                for (let b of boxesToMove) {
+                    const [nextBoxX, nextBoxY] = b.split(',',2).map(Number);
+                    const nextBoxStr = `${nextBoxX - 1},${nextBoxY}`;
+                    boxes.splice(boxes.indexOf(b), 1);
+                    boxes.push(nextBoxStr);
+                }
+                return;
+            }
+        } 
+    }
 
+    const moveRight = (robotX: number, robotY: number) => {
+        const boxesToMove: string[] = [];
+        for (let x = robotX + 1; x < WIDTH; x += 2) {
+            if (walls.includes(`${x},${robotY}`)) {
+                return;
+            } else if (boxes.includes(`${x},${robotY}`)) {
+                boxesToMove.push(`${x},${robotY}`);
+            } else {
+                robot.x = robot.x + 1;
+                for (let b of boxesToMove) {
+                    const [nextBoxX, nextBoxY] = b.split(',',2).map(Number);
+                    const nextBoxStr = `${nextBoxX + 1},${nextBoxY}`;
+                    boxes.splice(boxes.indexOf(b), 1);
+                    boxes.push(nextBoxStr);
+                }
+                return;
+            }
+        } 
+    }
+
+    const moveUp = (robotX: number, robotY: number) => {
+        const boxesToMove: string[] = [];
+
+        if (walls.includes(`${robotX},${robotY - 1}`)) {
+            return;
+        } else if (boxes.includes(`${robotX},${robotY - 1}`)) {
+            boxesToMove.push(`${robotX},${robotY - 1}`);
+        } else if (boxes.includes(`${robotX - 1},${robotY - 1}`)) {
+            boxesToMove.push(`${robotX - 1},${robotY - 1}`);
+        } else {
+            robot.y = robot.y - 1;
+            return;
+        }
+
+        for (let y = robotY - 1; y >= 0; y--) {
+            const nextRow = boxesToMove.filter( (b) =>  b.split(',',2).map(Number)[1] === y);
+
+            for (let nextB of nextRow) {
+                const [nextBoxX, nextBoxY] = nextB.split(',',2).map(Number);
+                if (walls.includes(`${nextBoxX},${nextBoxY - 1}`) || walls.includes(`${nextBoxX + 1},${nextBoxY - 1}`)) {
+                    return;
+                } else if (boxes.includes(`${nextBoxX},${nextBoxY - 1}`) || boxes.includes(`${nextBoxX + 1},${nextBoxY - 1}`) || boxes.includes(`${nextBoxX - 1},${nextBoxY - 1}`)) {
+                    if (boxes.includes(`${nextBoxX},${nextBoxY - 1}`)) {
+                        boxesToMove.push(`${nextBoxX},${nextBoxY - 1}`);
+                    }
+                    if (boxes.includes(`${nextBoxX + 1},${nextBoxY - 1}`)) {
+                        boxesToMove.push(`${nextBoxX + 1},${nextBoxY - 1}`);
+                    }
+                    if (boxes.includes(`${nextBoxX - 1},${nextBoxY - 1}`)) {
+                        boxesToMove.push(`${nextBoxX - 1},${nextBoxY - 1}`);
+                    }
+
+                } else {
+                    robot.y = robot.y - 1;
+                    for (let b of boxesToMove) {
+                        const [nextBoxX, nextBoxY] = b.split(',',2).map(Number);
+                        const nextBoxStr = `${nextBoxX},${nextBoxY - 1}`;
+                        boxes.splice(boxes.indexOf(b), 1);
+                        boxes.push(nextBoxStr);
+                    }
+                    return;
+                }
+            }  
+        }  
+    }
+
+    const moveDown = (robotX: number, robotY: number) => {
+        const boxesToMove: string[] = [];
+
+        if (walls.includes(`${robotX},${robotY + 1}`)) {
+            return;
+        } else if (boxes.includes(`${robotX},${robotY + 1}`)) {
+            boxesToMove.push(`${robotX},${robotY + 1}`);
+        } else if (boxes.includes(`${robotX - 1},${robotY + 1}`)) {
+            boxesToMove.push(`${robotX - 1},${robotY + 1}`);
+        } else {
+            robot.y = robot.y + 1;
+            return;
+        }
+
+        for (let y = robotY + 1; y < HEIGHT; y++) {
+            const nextRow = boxesToMove.filter( (b) =>  b.split(',',2).map(Number)[1] === y);
+
+            for (let nextB of nextRow) {
+                const [nextBoxX, nextBoxY] = nextB.split(',',2).map(Number);
+                if (walls.includes(`${nextBoxX},${nextBoxY + 1}`) || walls.includes(`${nextBoxX + 1},${nextBoxY + 1}`)) {
+                    return;
+                } else if (boxes.includes(`${nextBoxX},${nextBoxY + 1}`) || boxes.includes(`${nextBoxX + 1},${nextBoxY + 1}`) || boxes.includes(`${nextBoxX - 1},${nextBoxY + 1}`)) {
+                    if (boxes.includes(`${nextBoxX},${nextBoxY + 1}`)) {
+                        boxesToMove.push(`${nextBoxX},${nextBoxY + 1}`);
+                    }
+                    if (boxes.includes(`${nextBoxX + 1},${nextBoxY + 1}`)) {
+                        boxesToMove.push(`${nextBoxX + 1},${nextBoxY + 1}`);
+                    }
+                    if (boxes.includes(`${nextBoxX - 1},${nextBoxY + 1}`)) {
+                        boxesToMove.push(`${nextBoxX - 1},${nextBoxY + 1}`);
+                    }
+
+                } else {
+                    robot.y = robot.y + 1;
+                    for (let b of boxesToMove) {
+                        const [nextBoxX, nextBoxY] = b.split(',',2).map(Number);
+                        const nextBoxStr = `${nextBoxX},${nextBoxY + 1}`;
+                        boxes.splice(boxes.indexOf(b), 1);
+                        boxes.push(nextBoxStr);
+                    }
+                    return;
+                }
+            }  
+        }  
+    }
+
+    let count = 0;
+    for (let m of moves) {
         switch (m) {
-            case '<': 
-                if (walls.includes(`${boxX - 1},${boxY}`)) {
-                    return false;
-                }
-                if (boxes.includes(`${boxX - 2},${robot.y}`) && moveBox(m, `${boxX - 2},${robot.y}`)) {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX - 1},${boxY}`);
-                    return true;
-                } else if (!boxes.includes(`${boxX - 2},${boxY}`)) {
-                    return false
-                } else {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX - 1},${boxY}`);
-                    return true;
-                }
+            case '<':
+                moveLeft(robot.x, robot.y);
                 break;
-            case '>':    
-                if (walls.includes(`${boxX + 1},${boxY}`)) {
-                    return false;
-                }
-                if (boxes.includes(`${boxX + 1},${robot.y}`) && moveBox(m, `${boxX + 1},${robot.y}`)) {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX + 1},${boxY}`);
-                    return true;
-                } else if (!boxes.includes(`${boxX + 1},${boxY}`)) {
-                    return false
-                } else {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX + 1},${boxY}`);
-                    return true;
-                }
+            case '>':
+                moveRight(robot.x, robot.y);
                 break;
             case '^':
-                if (walls.includes(`${boxX},${boxY - 1}`) || walls.includes(`${boxX + 1},${boxY - 1}`) ) {
-                    return false;
-                }
-                if (boxes.includes(`${boxX},${boxY - 1}}`) && boxes.includes(`${boxX - 1},${boxY - 1}}`) && moveBox(m, `${boxX},${boxY - 1}`) && moveBox(m, `${boxX - 1},${boxY - 1}`)) {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX},${boxY - 1}`);
-                    return true;
-                }
-                else if (boxes.includes(`${boxX},${boxY - 1}}`) && !boxes.includes(`${boxX - 1},${boxY - 1}}`) && moveBox(m, `${boxX},${boxY - 1}`)) {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX},${boxY - 1}`);
-                    return true;
-                } else if (boxes.includes(`${boxX - 1},${boxY - 1}}`) && !boxes.includes(`${boxX},${boxY - 1}}`) && moveBox(m, `${boxX -1 },${boxY - 1}`)) {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX},${boxY - 1}`);
-                    return true;
-                } else if (boxes.includes(`${boxX},${boxY - 1}}`) || boxes.includes(`${boxX - 1},${boxY - 1}}`)) {
-                    return false;
-                } else {
-                    boxes.splice(boxes.indexOf(boxPos), 1);
-                    boxes.push(`${boxX},${boxY - 1}`);
-                }
+                moveUp(robot.x, robot.y);
                 break;
             case 'v':
-                if (walls.includes(`${boxX},${boxY + 1}`) || walls.includes(`${boxX + 1},${boxY + 1}`) ) {
-                    return false;
-                }
+                moveDown(robot.x, robot.y);
                 break;
         }
+ 
+        count++;
+
+        //if (count > 100 && count < 200) {
+         console.log(`MOVE ${count} = ${m}`);
+            print(WIDTH, HEIGHT);
+        //}
     }
-
-
-    print(16,8);
-    for (let m of moves) {
-        // console.log(m);
-        print(14,7);
-        const nextLoc = {x: robot.x + dirToMove[m]![0], y: robot.y + dirToMove[m]![1]};
-
-
-    
-        if (walls.includes(`${nextLoc.x},${nextLoc.y}`)) {
-            continue;
-        } else {
-            switch (m) {
-                case '<':
-                    if (boxes.includes(`${robot.x - 2},${robot.y}`) && moveBox(m, `${robot.x - 2},${robot.y}`)) {
-                        robot = nextLoc;
-                    } else if (!boxes.includes(`${robot.x - 2},${robot.y}`)) {
-                        robot = nextLoc;
-                    }
-                    break;
-                case '>':    
-                    if (boxes.includes(`${robot.x + 1},${robot.y}`) && moveBox(m, `${robot.x + 1},${robot.y}`)) {
-                        robot = nextLoc;
-                    } else if (!boxes.includes(`${robot.x + 1},${robot.y}`)) {
-                        robot = nextLoc;
-                    }
-                    break;
-                case '^':
-                        if (boxes.includes(`${robot.x},${robot.y - 1}`) && moveBox(m, `${robot.x},${robot.y - 1}`)) {
-                            robot = nextLoc;
-                        } else if (boxes.includes(`${robot.x - 1},${robot.y - 1}`) && moveBox(m, `${robot.x - 1},${robot.y - 1}`)) {
-                            robot = nextLoc;
-                        } else if (!boxes.includes(`${robot.x},${robot.y - 1}`)) {
-                            robot = nextLoc;
-                        }
-                        break;
-                case 'v':
-                    if (boxes.includes(`${robot.x},${robot.y + 1}`) && moveBox(m, `${robot.x},${robot.y + 1}`)) {
-                        robot = nextLoc;
-                    } else if (boxes.includes(`${robot.x - 1},${robot.y + 1}`) && moveBox(m, `${robot.x - 1},${robot.y + 1}`)) {
-                        robot = nextLoc;
-                    } else if (!boxes.includes(`${robot.x},${robot.y + 1}`)) {
-                        robot = nextLoc;
-                    }
-                    break;    
-            }
-        }
-          
-       
-    }
-
-    const total = boxes.reduce( (p, c) => {
-        const [boxX, boxY] = c.split(',',2).map(Number);
-        return p + (100 * boxY) + boxX;
-    }, 0);
-    console.log(total);
+    console.log(`${moves.length} ${count} moves`);
 
 
 };

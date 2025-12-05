@@ -39,19 +39,19 @@ EOL
 fi
 
 # Create Jest test file if it doesn't exist
-testFile="${testDir}/advent${day}.spec.ts"
-if [ ! -f "${testFile}" ]; then
-  cat <<EOL >"${testFile}"
-// test/advent${day}.spec.js
-
-import * from '../advent${day}';
-
-test('Example Test', () => {
-  expect(exampleFunction()).toBe('expectedValue');
-});
-EOL
-  echo "Created Jest test file: ${testFile}"
-fi
+# testFile="${testDir}/advent${day}.spec.ts"
+# if [ ! -f "${testFile}" ]; then
+#  cat <<EOL >"${testFile}"
+# // test/advent${day}.spec.js
+#
+# import * from '../advent${day}';
+#
+# test('Example Test', () => {
+#  expect(exampleFunction()).toBe('expectedValue');
+# });
+# EOL
+#  echo "Created Jest test file: ${testFile}"
+# fi
 
 # Create data directory and test.txt file if they don't exist
 testFile="${dataDir}/test.txt"

@@ -107,5 +107,62 @@ const part2 = () => {
 
 };
 
+const partAlex = () => {
+
+    const contents = getFileContents(); 
+    const disk = contents.split('').map(Number);
+    // console.log(disk);
+
+    const diskMap: number[][] = [];
+    const blockList: number[] = [];
+    const gapList: number[] = [];
+
+    for (let i = 0; i < (Math.floor(disk.length / 2)) + 1; i++) {
+        const fileBlock = new Array(disk[i * 2]).fill(i);
+        diskMap.push(fileBlock);
+        blockList.push(disk[i * 2]);
+        if ((i * 2) + 1 < disk.length) {
+            const gapBlock = new Array(disk[(i * 2) + 1]).fill(-1);
+            diskMap.push(gapBlock);
+            gapList.push(disk[(i * 2) + 1]);
+        }
+    }
+
+    console.dir(diskMap);
+    console.dir(blockList);
+    console.dir(gapList);
+
+    
+
+    for (let i = blockList.length - 1; i >=0; i--) {
+
+        const blockLength = blockList[i];
+        for (let j = 0; j < i; j++) {
+            const gapLength = gapList[j];
+            console.log(`checking ${j} of ${gapLength} vs ${i} of ${blockLength}`);
+            if (gapLength >= blockLength) {
+
+                const diskMapIndex = (j * 2) + 1;
+                const block = diskMap[i * 2];
+                diskMap.splice(i * 2, 1, new Array(blockLength).fill(-1));
+                diskMap.splice(diskMapIndex, 1, [], block, new Array(gapLength - blockLength).fill(-1));
+                gapList.splice(j, 1, 0, gapLength - blockLength);
+                blockList.splice(i, 1);
+                break;
+            }
+        }
+
+        console.dir(diskMap);
+        console.dir(blockList);
+        console.dir(gapList);
+
+        
+    }
+
+    
+
+}
+
 // part1();
-part2();
+// part2();
+partAlex();

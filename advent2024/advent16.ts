@@ -77,17 +77,9 @@ const part1 = () => {
         NEXT.sort( (a,b) => a.cost - b.cost || manDist(a.x, a.y, end.x, end.y) - manDist(b.x, b.y, end.x, end.y));
 
         const currentNode = NEXT.shift()!;
-        // V.push(currentNode);
-        
-
         if (currentNode.x === end.x && currentNode.y === end.y) {
-            
-            console.log(`Found! Cost: ${currentNode.cost}`);
-            // console.dir(currentNode.paths);
-            // console.dir(currentNode.paths);
-            print(currentNode.paths);
-            // break;
-            // console.dir(NEXT);
+            // console.log(`Found! Cost: ${currentNode.cost}`);
+            // print(currentNode.paths);
             for (let p of currentNode.paths) {
                 allPaths.add(p);
             }
@@ -106,11 +98,6 @@ const part1 = () => {
                     if (currentNode.cost + 1 + (currentNode.dir != nextDir ? TURN_COST : 0) <= MINIMUM) {
                         NEXT.push( {x: nextX, y:nextY, dir: nextDir, cost: currentNode.cost + 1 + (currentNode.dir != nextDir ? TURN_COST : 0), paths: [...currentNode.paths, `${nextX},${nextY}`]});
                     }
-                    // if (n && n.cost > currentNode.cost + TURN_COST) {
-                    //     n.cost = currentNode.cost + 1 + (currentNode.dir != nextDir ? TURN_COST : 0);
-                    // } else if (!n) {
-                    //     NEXT.push( {x: nextX, y:nextY, dir: nextDir, cost: currentNode.cost + 1 + (currentNode.dir != nextDir ? TURN_COST : 0), paths: [...currentNode.paths, `${nextX},${nextY}`]});
-                    // }
                 }
             }
         }

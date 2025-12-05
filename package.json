@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "advent2025": "ts-node advent2025/${npm_config_code} -f advent2025/data/${npm_config_data}",
     "advent2024": "ts-node advent2024/${npm_config_code} -f advent2024/data/${npm_config_data}",
     "advent2023": "ts-node advent2023/${npm_config_code} -f advent2023/data/${npm_config_data}",
     "advent2022": "ts-node advent2022/${npm_config_code} -f advent2022/data/${npm_config_data}",

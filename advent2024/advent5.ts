@@ -74,6 +74,25 @@ const part2 = () => {
         return orderedArray;
     }
 
+    let reorder2 = (arr: number[]) => {
+        const validRules = rules.filter ( (v) => arr.includes(v[0]) && arr.includes(v[1]) );
+        return arr.toSorted( (a,b) => validRules.filter ( (v) => v[0] === a && v[1] === b).length > 0 );
+        const orderedArray: number[] = [];
+        const arrLength = arr.length;
+
+        while (orderedArray.length < arrLength) {
+            const validRules = rules.filter ( (v) => arr.includes(v[0]) && arr.includes(v[1]) );
+
+            for (let index = 0; index < arr.length; index++) {
+                const page = arr[index];
+                if (validRules.filter( (v) => v[1] === page ).length === 0) {
+                    orderedArray.push(page);
+                    arr.splice(index, 1);
+                }
+            }
+        }
+        return orderedArray;
+    }
 
     let total = 0;
     NEXT_PAGES:
