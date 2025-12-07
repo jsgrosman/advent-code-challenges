@@ -30,15 +30,10 @@ const part1 = () => {
     }
     ranges = newRanges;
 
-    let count = 0;
-    for (let ingr of ingredients) {
-        for (const [start, end] of ranges) {
-            if (ingr >= start && ingr <= end) {
-                count++;
-                break;
-            } 
-        }
-    }
+    let count = ingredients.reduce( (prev, ingr) => {
+         const index = ranges.findIndex( ([start, end]) => ingr >= start && ingr <= end );
+         return index > -1 ? prev + 1 : prev;
+    }, 0);
     console.log(`Answer 1: ${count}`);
 };
 
@@ -52,7 +47,9 @@ const part2 = () => {
     for (let line of lines) {
         if (line.includes('-')) {
            ranges.push(line.split('-', 2).map(Number));
-        } 
+        } else {
+            break;
+        }
     }
 
     ranges.sort( ([aStart, aEnd], [bStart, bEnd]) => aStart - bStart);
