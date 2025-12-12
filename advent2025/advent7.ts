@@ -40,9 +40,7 @@ const part2 = () => {
         }
 
         let result = 1;
-        if (currentLine === lines.length - 1) {
-            result = 1;
-        } else {
+        if (currentLine < lines.length - 1) {
             if (lines[currentLine].charAt(currentIndex) === '^') {
                 result = dfs(currentLine + 1, currentIndex - 1) + dfs(currentLine + 1, currentIndex + 1);
             } else {
@@ -53,8 +51,7 @@ const part2 = () => {
         return result;
     }
 
-    const firstLine = lines[0];
-    const firstIndex = firstLine.indexOf('S');
+    const firstIndex = lines[0].indexOf('S');
     const result = dfs(1, firstIndex);
     console.log(`Answer 2: ${result}`);
 };

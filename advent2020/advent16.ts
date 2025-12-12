@@ -1,159 +1,130 @@
 import { getFileContents } from "../Utils";
 
-const contents = getFileContents();
-const lines = contents.trim().split(/\n/g);
+const badTickets:number[] = [];
 
-interface rule {
-    name: string,
-    ranges: number[],
+const part1 = () => {
+    const contents = getFileContents();
+    const lines = contents.trim().split(/\n/g);
+
+    const ranges: number[][] = [];
+    const tickets: number[][] = []
+
+    for (let line of lines) {
+        const fieldsResult = line.match(/([a-z ]+): (\d+)\-(\d+) or (\d+)\-(\d+)/);
+
+        if (fieldsResult) {
+            const fieldName = fieldsResult[1];
+            const [startRange1, endRange1, startRange2, endRange2] = fieldsResult.slice(2, 6).map(Number);
+            ranges.push([startRange1, endRange1], [startRange2, endRange2]);
+        }
+
+        const ticketsResult = line.match(/^(\d+,?)+$/);
+        if (ticketsResult) {
+            tickets.push(line.split(',').map(Number));
+        }
+    }
+
+    ranges.sort( ([aStart, aEnd], [bStart, bEnd]) => aStart - bStart);
+    const combinedRanges: number[][] = [ranges.shift()!];
+    while (ranges.length > 0) {
+        const [start1, end1] = combinedRanges.pop()!;
+        const [start2, end2] = ranges.shift()!;
+        if (start2 <= end1) {
+            combinedRanges.push([Math.min(start1,start2),Math.max(end1, end2)]);
+        } else {
+            combinedRanges.push([start1,end1], [start2,end2]);
+        }
+    }
+
+    let result = 0;
+    let ticketNum = -1;
+    
+    for (let ticket of tickets) {
+        ticketNum++;
+        NEXT_NUM:
+        for (let num of ticket) {
+            for (let r of combinedRanges) {
+                if (num >= r[0] && num <= r[1]) {
+                    continue NEXT_NUM;
+                }
+            }
+            badTickets.push(ticketNum);
+            result += num;
+        }
+    }
+    console.log(badTickets);
+    console.log(`Answer 1: ${result}`);
 };
 
-const rules: rule[] = [];
-let index = 0;
 
-//add to array
-for (let i = index; i < lines.length; i ++){
-    //console.log(`rules: ${lines[i]}`);
-    if (lines[i] == ''){
-        index = i + 1;
-        break;
-    }
+const part2 = () => {
+     const contents = getFileContents();
+    const lines = contents.trim().split(/\n/g);
 
-    //console.log(`line: ${lines[i]}`);
-    const lineList = lines[i].split(': ');
-    if (lineList[1]){
-        const startEnds = lineList[1].split(' or ');
-        const rangeList: number[] = [];
-        for (let range of startEnds){
-            const startEnd = range.split('-');
-            rangeList.push(Number(startEnd[0]));
-            rangeList.push(Number(startEnd[1]));
+    console.log(badTickets);
+    const ranges: number[][] = [];
+    const tickets: number[][] = []
+
+    const fieldMap: Map<string, number[]> = new Map();
+    const positionsToFields: Map<number, Set<string>> = new Map();
+
+    let ticketNum = -1;
+    for (let line of lines) {
+        const fieldsResult = line.match(/([a-z ]+): (\d+)\-(\d+) or (\d+)\-(\d+)/);
+
+        if (fieldsResult) {
+            const fieldName = fieldsResult[1];
+            const [startRange1, endRange1, startRange2, endRange2] = fieldsResult.slice(2, 6).map(Number);
+            fieldMap.set(fieldName, [startRange1, endRange1, startRange2, endRange2]);
         }
-        const newRule: rule = {
-            name: lineList[0],  
-            ranges: rangeList,
-        };
-        rules.push(newRule);
-    }
-}
 
-//console.log(`index: ${index}, line at index: ${lines[index]}`);
-
-// your ticket
-const myNumbers: number[] = [];
-for (let i = index; i < lines.length; i ++){
-    //console.log(`my ticket: ${lines[i]}`);
-
-    if (lines[i] == ''){
-        index = i + 1;
-        break;
-    }
-
-    if (lines[i].includes('your ticket:')) {
-        continue;
-    }
-
-    const nums = lines[i].split(',');
-    for (let num of nums){
-        myNumbers.push(Number(num));
-    }
-}
-
-const otherNumbers: number[] = [];
-for (let i = index; i < lines.length; i ++){
-    //console.log(`your tickets: ${lines[i]}`);
-
-
-    if (lines[i].includes('nearby tickets:')) {
-        continue;
-    }
-
-    const nums = lines[i].split(',');
-    for (let num of nums){
-        otherNumbers.push(Number(num));
-    }
-}
-
-//console.dir(rules);
-//console.dir(myNumbers);
-//console.dir(otherNumbers);
-
-let newNums: number[] = [];
-
-newNums = otherNumbers.filter((c) => {
-    for (let r of rules){
-        for (let i = 0; i < r.ranges.length; i += 2){
-            if (c >= r.ranges[i] && c <= r.ranges[i+1]){
-                return false;
+        const ticketsResult = line.match(/^(\d+,?)+$/);
+        if (ticketsResult) {
+            ticketNum++;
+            if (!badTickets.includes(ticketNum)) {
+                tickets.push(line.split(',').map(Number));
             }
         }
     }
-    return true;
-})
-
-//const sum = newNums.reduce((p,c) => {return p+c});
-//console.dir(newNums);
-
-const otherTickets: number[][] = [];
-for (let i = index; i < lines.length; i ++){
-    if (lines[i].includes('nearby tickets:')){
-        continue;
+    for (let i = 0; i < tickets[0].length; i++) {
+        positionsToFields.set(i, new Set(Array.from(fieldMap.keys())));
     }
 
-    const ticketStr: string[] = lines[i].split(',');
-    const ticket: number[] = [];
-    for (let val of ticketStr){
-        ticket.push(Number(val));
-    }
+    console.dir(tickets);
 
-    otherTickets.push(ticket);
-}
-
-const validTickets: number[][] = otherTickets.filter((ticket) => {
-    for (let num of ticket){
-        if (newNums.includes(num)){
-            return false;
-        }
-    }
-    return true;
-})
-
-//console.dir(validTickets);
-
-const airplaneTicket = new Map<rule,number>();
-const inds: number[] = [];
-let count = 0;
-while (airplaneTicket.size < rules.length && count < 2000000){
-    const valids: number[][] = [];
-    for (let r of rules){
-        const validNums: number[] = [];
-        console.log(r.name);
-        for (let b = 0; b < otherNumbers.length; b ++){
-            for (let i = 0; i < r.ranges.length; i += 2){
-                if (otherNumbers[b] >= r.ranges[i] && otherNumbers[b] <= r.ranges[i+1]){
-                    validNums.push(otherNumbers[b]);
+    console.dir(positionsToFields);
+    
+    for (let ticket of tickets) {
+        for (let pos = 0; pos < ticket.length; pos++) {
+            const value = ticket[pos];
+            for (let [key, ranges] of fieldMap.entries()) {
+                if (value < ranges[0] ||  value > ranges[3]) {
+                    positionsToFields.get(pos)!.delete(key);
+                } else if (value > ranges[1] &&  value < ranges[2]) {
+                    positionsToFields.get(pos)!.delete(key);
                 }
-            }
-        }
-        valids.push(validNums);
-    }
-    let countValids: number[] = [validTickets.length];
-    for (let valid of valids){
-        for (let num of valid){
-            for (let ticket of validTickets){
-                if (ticket.includes(num)){
-                    countValids[validTickets.indexOf(ticket)] ++;
+                if (positionsToFields.get(pos)!.size === 1) {
+                    for (let [posKey, posFields] of positionsToFields.entries()) {
+                        if (posKey != pos) {
+                            posFields.delete([...positionsToFields.get(pos)!][0]);
+                        }
+                    }
                 }
             }
         }
     }
-    for (let ticket of validTickets){
-        if (countValids[validTickets.indexOf(ticket)] == 1){
-            
-        }
+    
+    let result = 1;
+    for (let [posKey, posFields] of positionsToFields.entries()) {
+        if (posFields.size === 1 && [...posFields!][0].startsWith('departure')) {
+            console.log(`${posKey} ${[...posFields!][0]}`);
+            result *= tickets[0][posKey];
+        }   
     }
-    console.log(airplaneTicket.size);
-    count ++;
-}
+    console.log(`Answer 2: ${result}`);
 
-console.dir(airplaneTicket);
+
+};
+
+part1();
+part2();
